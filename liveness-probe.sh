@@ -33,8 +33,6 @@ OFFLINE_BACKENDS=$(echo "$BACKEND_STATUS" | grep -E "^\s*state:\s*(offline|faile
 if [ -n "$OFFLINE_BACKENDS" ]; then
     echo "ERROR: Found offline backend(s):"
     echo "$OFFLINE_BACKENDS"
-    # Show backends
-    echo "$BACKEND_STATUS" || true
     exit 1
 fi
 
