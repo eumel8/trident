@@ -2,3 +2,4 @@
 !bin/**
 !*.txt
 !LICENSE
+!liveness-probe.sh
