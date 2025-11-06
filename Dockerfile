@@ -22,7 +22,7 @@ RUN --mount=type=secret,id=activation_key,env=ACTIVATION_KEY \
     fi;
 
 # Copy dependencies to the root filesystem
-RUN for dep in /bin/mount /bin/umount /sbin/mount.nfs /sbin/mount.nfs4 /etc/netconfig /etc/protocols /etc/ssl/certs/*; do \
+RUN for dep in /bin/mount /bin/umount /bin/sh /bin/grep /sbin/mount.nfs /sbin/mount.nfs4 /etc/netconfig /etc/protocols /etc/ssl/certs/*; do \
         mkdir -p /rootfs/$(dirname $dep) && cp -L $dep /rootfs/$dep; \
     done
 
@@ -31,11 +31,18 @@ RUN for bin in /sbin/mount.nfs /sbin/mount.nfs4; do \
         ldd $bin | tr -s '[:space:]' '\n' | grep '^/' | xargs -I % sh -c 'mkdir -p /rootfs/$(dirname %) && cp -L % /rootfs/%'; \
     done
 
+# Copy shell and grep dependencies to the root filesystem
+RUN for bin in /bin/sh /bin/grep; do \
+        ldd $bin | tr -s '[:space:]' '\n' | grep '^/' | xargs -I % sh -c 'mkdir -p /rootfs/$(dirname %) && cp -L % /rootfs/%' || true; \
+    done
+
 COPY ${BIN} /rootfs/trident_orchestrator
 COPY ${CLI_BIN} /rootfs/bin/tridentctl
 COPY ${NODE_PREP_BIN} /rootfs/node_prep
 COPY ${SYSWRAP_BIN} /rootfs/syswrap
 ADD ${CHWRAP_BIN} /rootfs/
+COPY liveness-probe.sh /rootfs/bin/liveness-probe.sh
+RUN chmod +x /rootfs/bin/liveness-probe.sh
 
 FROM scratch
 

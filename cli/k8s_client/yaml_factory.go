@@ -740,10 +740,8 @@ spec:
         livenessProbe:
           exec:
             command:
-            - tridentctl
-            - -s
-            - "{IP_LOCALHOST}:8000"
-            - version
+            - /bin/sh
+            - /bin/liveness-probe.sh
           failureThreshold: 2
           initialDelaySeconds: 120
           periodSeconds: 120
