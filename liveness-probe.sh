@@ -28,13 +28,13 @@ fi
 
 # Parse YAML and check for offline backends
 # Look for "state:" field with "offline" value
-OFFLINE_BACKENDS=$(echo "$BACKEND_STATUS" | grep -E "^\s*state:\s*failed" || true)
+OFFLINE_BACKENDS=$(echo "$BACKEND_STATUS" | grep -E "^\s*state:\s*(offline|failed)" || true)
 
 if [ -n "$OFFLINE_BACKENDS" ]; then
     echo "ERROR: Found offline backend(s):"
     echo "$OFFLINE_BACKENDS"
-    # Show which backends are offline
-    echo "$BACKEND_STATUS" | grep -B 5 "state: failed" || true
+    # Show backends
+    echo "$BACKEND_STATUS" || true
     exit 1
 fi
 
